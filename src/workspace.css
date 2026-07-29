@@ -364,6 +364,8 @@
   margin: 1rem 0 0;
   color: #4b554d;
   font: 0.82rem/1.75 system-ui, sans-serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .postcard-footer {
