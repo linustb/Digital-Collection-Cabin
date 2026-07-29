@@ -22,20 +22,20 @@ type RecordForm = Omit<OralHistoryRecord, 'id' | 'createdAt' | 'updatedAt'>
 const STORAGE_KEY = 'qinjing-oral-history-records'
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
 const scenes: Scene[] = [
-  { src: assetUrl('/images/hero/winter-campus.jpg'), label: '冬日雕像', alt: '雪中的北京科技大学校园雕像与纪念石', description: '雪落校园，雕像静静见证一代代北科人的成长。' },
-  { src: assetUrl('/images/hero/spring-heritage.jpg'), label: '春日校史馆', alt: '春日绿荫掩映下的北京科技大学校史馆', description: '绿荫深处，校史馆收藏着北科人共同的来路。' },
-  { src: assetUrl('/images/hero/star-trails.jpg'), label: '夜空星轨', alt: '星轨下北京科技大学校园里的鼎与建筑', description: '星河流转，校园里的鼎守望着未曾停歇的理想。' },
-  { src: assetUrl('/images/hero/golden-library.jpg'), label: '秋日图书馆', alt: '金色银杏与北京科技大学图书馆前的鼎', description: '金秋银杏与图书馆相映，鼎前的光影记录求知的日常。' },
+  { src: assetUrl('/public/images/hero/winter-campus.jpg'), label: '冬日雕像', alt: '雪中的北京科技大学校园雕像与纪念石', description: '雪落校园，雕像静静见证一代代北科人的成长。' },
+  { src: assetUrl('/public/images/hero/spring-heritage.jpg'), label: '春日校史馆', alt: '春日绿荫掩映下的北京科技大学校史馆', description: '绿荫深处，校史馆收藏着北科人共同的来路。' },
+  { src: assetUrl('/public/images/hero/star-trails.jpg'), label: '夜空星轨', alt: '星轨下北京科技大学校园里的鼎与建筑', description: '星河流转，校园里的鼎守望着未曾停歇的理想。' },
+  { src: assetUrl('/public/images/hero/golden-library.jpg'), label: '秋日图书馆', alt: '金色银杏与北京科技大学图书馆前的鼎', description: '金秋银杏与图书馆相映，鼎前的光影记录求知的日常。' },
 ]
 const navLinks = [{ label: '校史故事', href: '#story' }, { label: '四季光影', href: '#seasons' }, { label: '采录舱', href: '#start' }]
 const stats = ['北京科技大学', '满井溯源', '秦京铸魂', '文化传承实践团']
 const postcardPhotos = [
-  assetUrl('/images/postcards/0X1A7231-HDR.jpg'),
-  assetUrl('/images/postcards/2021.11.11体育馆星轨加强星点.jpg'),
-  assetUrl('/images/postcards/WMZ_1614.jpg'),
-  assetUrl('/images/postcards/WMZ_6959.jpg'),
-  assetUrl('/images/postcards/golden-library.jpg'),
-  assetUrl('/images/postcards/star-trails.jpg'),
+  assetUrl('/public/images/postcards/0X1A7231-HDR.jpg'),
+  assetUrl('/public/images/postcards/2021.11.11体育馆星轨加强星点.jpg'),
+  assetUrl('/public/images/postcards/WMZ_1614.jpg'),
+  assetUrl('/public/images/postcards/WMZ_6959.jpg'),
+  assetUrl('/public/images/postcards/golden-library.jpg'),
+  assetUrl('/public/images/postcards/star-trails.jpg'),
 ]
 const emptyForm: RecordForm = { personName: '', identity: '老校友', year: '', place: '', keywords: '', summary: '', quoteInput: '', message: '', authorized: 'yes', contact: '' }
 const demoRecord: OralHistoryRecord = { id: 'demo-1952', personName: '李明远', identity: '老教师', year: '1952', place: '钢铁冶金系 / 学院路', keywords: '建校初期, 钢铁报国, 实验室建设', summary: '新中国工业建设急需钢铁人才。李老师随第一批教师来到学院路，在条件有限的教室和实验室里带领学生边学习、边试验、边服务国家重大需求。', quoteInput: '那时设备不多，但每个人心里都有一座炉火。我们相信，把钢炼好，就是把国家的骨骼立起来。', message: '希望青年学生把个人理想放进国家需要里，在真实问题中淬炼本领。', authorized: 'yes', contact: '示例数据', createdAt: '2026-07-04' }
