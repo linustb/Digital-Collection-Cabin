@@ -138,7 +138,7 @@ export default function App() {
     if (!storyText || !form.personName.trim()) { notify('请先生成故事卡。'); return }
     const canvas = document.createElement('canvas')
     canvas.width = 1400
-    canvas.height = 1100
+    canvas.height = 900
     const context = canvas.getContext('2d')
     if (!context) { notify('当前浏览器无法生成明信片。'); return }
     const drawCard = () => {
@@ -221,23 +221,23 @@ export default function App() {
         context.lineWidth = 4
         context.strokeRect(820, 210, 445, 315)
         context.beginPath()
-        context.arc(1110, 675, 74, 0, Math.PI * 2)
+        context.arc(1100, 675, 74, 0, Math.PI * 2)
         context.strokeStyle = 'rgba(123, 51, 43, .65)'
         context.lineWidth = 4
         context.stroke()
         context.font = '600 21px system-ui, sans-serif'
         context.fillStyle = '#7b332b'
         context.textAlign = 'center'
-        context.fillText('北科 · 记忆', 1110, 668)
+        context.fillText('北科 · 记忆', 1100, 668)
         context.font = '18px system-ui, sans-serif'
-        context.fillText('SINCE 1952', 1110, 698)
+        context.fillText('SINCE 1952', 1100, 698)
         context.textAlign = 'left'
-        context.font = '22px system-ui, sans-serif'
+        context.font = '23px system-ui, sans-serif'
         context.fillStyle = '#7b332b'
-        context.fillText('一帧光影，一段校史；一封明信片，一份念想。', 92, 900)
+        context.fillText('一帧光影，一段校史；一封明信片，一份念想。', 92, 800)
         context.font = '18px system-ui, sans-serif'
         context.fillStyle = '#6a7569'
-        context.fillText('QINJING ORAL HISTORY ARCHIVE', 92, 950)
+        context.fillText('QINJING ORAL HISTORY ARCHIVE', 92, 830)
         canvas.toBlob((blob) => {
           if (!blob) { notify('明信片导出失败。'); return }
           const url = URL.createObjectURL(blob)
