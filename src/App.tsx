@@ -20,24 +20,22 @@ type OralHistoryRecord = {
 type RecordForm = Omit<OralHistoryRecord, 'id' | 'createdAt' | 'updatedAt'>
 
 const STORAGE_KEY = 'qinjing-oral-history-records'
+const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
 const scenes: Scene[] = [
-  { src: '/images/hero/winter-campus.jpg', label: '冬日雕像', alt: '雪中的北京科技大学校园雕像与纪念石', description: '雪落校园，雕像静静见证一代代北科人的成长。' },
-  { src: '/images/hero/spring-heritage.jpg', label: '春日校史馆', alt: '春日绿荫掩映下的北京科技大学校史馆', description: '绿荫深处，校史馆收藏着北科人共同的来路。' },
-  { src: '/images/hero/star-trails.jpg', label: '夜空星轨', alt: '星轨下北京科技大学校园里的鼎与建筑', description: '星河流转，校园里的鼎守望着未曾停歇的理想。' },
-  { src: '/images/hero/golden-library.jpg', label: '秋日图书馆', alt: '金色银杏与北京科技大学图书馆前的鼎', description: '金秋银杏与图书馆相映，鼎前的光影记录求知的日常。' },
+  { src: assetUrl('/images/hero/winter-campus.jpg'), label: '冬日雕像', alt: '雪中的北京科技大学校园雕像与纪念石', description: '雪落校园，雕像静静见证一代代北科人的成长。' },
+  { src: assetUrl('/images/hero/spring-heritage.jpg'), label: '春日校史馆', alt: '春日绿荫掩映下的北京科技大学校史馆', description: '绿荫深处，校史馆收藏着北科人共同的来路。' },
+  { src: assetUrl('/images/hero/star-trails.jpg'), label: '夜空星轨', alt: '星轨下北京科技大学校园里的鼎与建筑', description: '星河流转，校园里的鼎守望着未曾停歇的理想。' },
+  { src: assetUrl('/images/hero/golden-library.jpg'), label: '秋日图书馆', alt: '金色银杏与北京科技大学图书馆前的鼎', description: '金秋银杏与图书馆相映，鼎前的光影记录求知的日常。' },
 ]
 const navLinks = [{ label: '校史故事', href: '#story' }, { label: '四季光影', href: '#seasons' }, { label: '采录舱', href: '#start' }]
 const stats = ['北京科技大学', '满井溯源', '秦京铸魂', '文化传承实践团']
 const postcardPhotos = [
-  '/images/postcards/0X1A7231-HDR.jpg',
-  '/images/postcards/2021.11.11体育馆星轨加强星点.jpg',
-  '/images/postcards/2021.11.14西门星轨.jpg',
-  '/images/postcards/2021.5.18逸夫楼闪电合成.jpg',
-  '/images/postcards/2022.3.27逸夫楼拍天工星轨.jpg',
-  '/images/postcards/2024.11.5图书馆鼎星轨合成-1.jpg',
-  '/images/postcards/WMZ_1614.jpg',
-  '/images/postcards/WMZ_6959.jpg',
-  '/images/postcards/WMZ_8845 (2).jpg',
+  assetUrl('/images/postcards/0X1A7231-HDR.jpg'),
+  assetUrl('/images/postcards/2021.11.11体育馆星轨加强星点.jpg'),
+  assetUrl('/images/postcards/WMZ_1614.jpg'),
+  assetUrl('/images/postcards/WMZ_6959.jpg'),
+  assetUrl('/images/postcards/golden-library.jpg'),
+  assetUrl('/images/postcards/star-trails.jpg'),
 ]
 const emptyForm: RecordForm = { personName: '', identity: '老校友', year: '', place: '', keywords: '', summary: '', quoteInput: '', message: '', authorized: 'yes', contact: '' }
 const demoRecord: OralHistoryRecord = { id: 'demo-1952', personName: '李明远', identity: '老教师', year: '1952', place: '钢铁冶金系 / 学院路', keywords: '建校初期, 钢铁报国, 实验室建设', summary: '新中国工业建设急需钢铁人才。李老师随第一批教师来到学院路，在条件有限的教室和实验室里带领学生边学习、边试验、边服务国家重大需求。', quoteInput: '那时设备不多，但每个人心里都有一座炉火。我们相信，把钢炼好，就是把国家的骨骼立起来。', message: '希望青年学生把个人理想放进国家需要里，在真实问题中淬炼本领。', authorized: 'yes', contact: '示例数据', createdAt: '2026-07-04' }
@@ -271,7 +269,7 @@ export default function App() {
             <div className="form-row"><SelectField label="授权状态" value={form.authorized} onChange={(value) => updateField('authorized', value)} options={[['yes', '已授权整理展示'], ['pending', '待确认授权'], ['private', '仅内部保存']]} /><Field label="备注" value={form.contact} onChange={(value) => updateField('contact', value)} placeholder="可选，用于后续回访" /></div>
             <div className="form-actions"><button className="primary-button liquid-glass" type="submit">保存档案</button><button className="secondary-button liquid-glass" type="button" onClick={resetForm}>清空表单</button><button className="secondary-button liquid-glass" type="button" onClick={loadDemo}>载入示例</button></div>
           </form></section>
-          <section className="panel-card liquid-glass"><h2>资料库检索与故事生成</h2><p className="panel-note">点击档案可回填编辑；选中档案后可生成故事卡、复制文本或导出 JSON 备份。</p><div className="searchbar"><Field label="检索人物 / 年份 / 地点 / 关键词" value={query} onChange={setQuery} placeholder="输入关键词筛选档案" /><div className="list-actions"><button className="secondary-button liquid-glass" type="button" onClick={exportData}><Download size={14} /> 导出</button><button className="danger-button liquid-glass" type="button" onClick={deleteSelected}>删除选中</button></div></div><div className="archive-list">{filteredRecords.length ? filteredRecords.map((record) => <button className={`archive-item ${selectedId === record.id ? 'active' : ''}`} key={record.id} type="button" onClick={() => selectRecord(record)}><div className="archive-head"><strong>{record.personName}</strong><span className="tag">{authorizationLabel(record.authorized)}</span></div><div className="archive-meta">{record.identity} · {record.year || '年份未填'} · {record.place || '地点未填'}</div><div className="archive-tags">{keywordsOf(record.keywords).slice(0, 4).map((keyword) => <span className="tag" key={keyword}>{keyword}</span>)}</div></button>) : <div className="empty-state">暂无匹配档案。请保存第一份访谈记录，或载入示例档案。</div>}</div>{storyText && <figure className="postcard-figure"><div className="postcard"><div className="postcard-copy"><div className="postcard-kicker">北科光影志 · 口述校史明信片</div><div className="postcard-scene">{scene.label} · {form.year || '岁月留痕'}</div><h3>{form.personName}</h3><div className="postcard-meta">{form.identity || '亲历者'} · {form.place || '北京科技大学'}</div><p>{storyText.replace(/\s+/g, ' ').slice(0, 138)}{storyText.length > 138 ? '…' : ''}</p><div className="postcard-footer">一帧光影，一段校史；一封明信片，一份念想。</div></div><div className="postcard-image"><img src={postcardPhoto} alt="从北科图片库随机抽取的明信片校园照片" /><div className="postmark"><strong>北科</strong><span>SINCE 1952</span></div></div></div><figcaption>故事生成后自动排版为校史明信片，可下载保存。</figcaption></figure>}<div className="story-card"><div className="story-meta">Oral History Story Card</div>{storyText ? <><h3>{form.personName}：{keywordsOf(form.keywords).join(' / ') || '校史记忆'}</h3><p>{storyText}</p></> : <><h3>请选择或保存一位受访者</h3><p>系统会根据人物信息、访谈摘要、口述片段与青年寄语，自动整理为故事卡。</p></>}</div><div className="card-actions"><button className="primary-button liquid-glass" type="button" onClick={generateStory}><Sparkles size={14} /> 生成故事卡</button>{storyText && <button className="secondary-button liquid-glass" type="button" onClick={downloadPostcard}><Download size={14} /> 下载明信片</button>}<button className="secondary-button liquid-glass" type="button" onClick={copyStory}>复制故事卡</button></div></section>
+          <section className="panel-card liquid-glass"><h2>资料库检索与故事生成</h2><p className="panel-note">点击档案可回填编辑；选中档案后可生成故事卡、复制文本或导出 JSON 备份。</p><div className="searchbar"><Field label="检索人物 / 年份 / 地点 / 关键词" value={query} onChange={setQuery} placeholder="输入关键词筛选档案" /><div className="list-actions"><button className="secondary-button liquid-glass" type="button" onClick={exportData}><Download size={14} /> 导出</button><button className="danger-button liquid-glass" type="button" onClick={deleteSelected}>删除选中</button></div></div><div className="archive-list">{filteredRecords.length ? filteredRecords.map((record) => <button className={`archive-item ${selectedId === record.id ? 'active' : ''}`} key={record.id} type="button" onClick={() => selectRecord(record)}><div className="archive-head"><strong>{record.personName}</strong><span className="tag">{authorizationLabel(record.authorized)}</span></div><div className="archive-meta">{record.identity} · {record.year || '年份未填'} · {record.place || '地点未填'}</div><div className="archive-tags">{keywordsOf(record.keywords).slice(0, 4).map((keyword) => <span className="tag" key={keyword}>{keyword}</span>)}</div></button>) : <div className="empty-state">暂无匹配档案。请保存第一份访谈记录，或载入示例档案。</div>}</div>{storyText && <figure className="postcard-figure"><div className="postcard"><div className="postcard-copy"><div className="postcard-kicker">北科光影志 · 口述校史明信片</div><div className="postcard-scene">{scene.label} · {form.year || '岁月留痕'}</div><h3>{form.personName}</h3><div className="postcard-meta">{form.identity || '亲历者'} · {form.place || '北京科技大学'}</div><p>{storyText.replace(/\s+/g, ' ').slice(0, 138)}{storyText.length > 138 ? '…' : ''}</p><div className="postcard-footer">一帧光影，一段校史；一封明信片，一份念想。</div></div><div className="postcard-image"><img src={postcardPhoto} alt="从北科图片库随机抽取的明信片校园照片" onError={(event) => { event.currentTarget.src = postcardPhotos[0] }} /><div className="postmark"><strong>北科</strong><span>SINCE 1952</span></div></div></div><figcaption>故事生成后自动排版为校史明信片，可下载保存。</figcaption></figure>}<div className="story-card"><div className="story-meta">Oral History Story Card</div>{storyText ? <><h3>{form.personName}：{keywordsOf(form.keywords).join(' / ') || '校史记忆'}</h3><p>{storyText}</p></> : <><h3>请选择或保存一位受访者</h3><p>系统会根据人物信息、访谈摘要、口述片段与青年寄语，自动整理为故事卡。</p></>}</div><div className="card-actions"><button className="primary-button liquid-glass" type="button" onClick={generateStory}><Sparkles size={14} /> 生成故事卡</button>{storyText && <button className="secondary-button liquid-glass" type="button" onClick={downloadPostcard}><Download size={14} /> 下载明信片</button>}<button className="secondary-button liquid-glass" type="button" onClick={copyStory}>复制故事卡</button></div></section>
         </div>
       </div>
     </section>
