@@ -138,7 +138,7 @@ export default function App() {
     if (!storyText || !form.personName.trim()) { notify('请先生成故事卡。'); return }
     const canvas = document.createElement('canvas')
     canvas.width = 1400
-    canvas.height = 880
+    canvas.height = 1100
     const context = canvas.getContext('2d')
     if (!context) { notify('当前浏览器无法生成明信片。'); return }
     const drawCard = () => {
@@ -169,11 +169,43 @@ export default function App() {
       context.font = '24px system-ui, sans-serif'
       context.fillStyle = '#7b332b'
       context.fillText(`${form.identity || '亲历者'}  ·  ${form.place || '北京科技大学'}`, 96, 298)
-      context.font = '25px system-ui, sans-serif'
       context.fillStyle = '#4b554d'
-      const excerpt = storyText.replace(/\s+/g, ' ').slice(0, 138)
-      const words = excerpt.match(/.{1,28}/g) || []
-      words.slice(0, 4).forEach((line, index) => context.fillText(line, 96, 386 + index * 42))
+      const storyTop = 342
+      const storyBottom = 790
+      const storyWidth = 620
+      let storyFontSize = 23
+      let storyLines: string[] = []
+      const wrapStory = (fontSize: number) => {
+        context.font = `${fontSize}px system-ui, sans-serif`
+        const lines: string[] = []
+        storyText.split('\n').forEach((paragraph) => {
+          if (!paragraph) {
+            lines.push('')
+            return
+          }
+          let line = ''
+          Array.from(paragraph).forEach((character) => {
+            const candidate = line + character
+            if (context.measureText(candidate).width > storyWidth && line) {
+              lines.push(line)
+              line = character
+            } else {
+              line = candidate
+            }
+          })
+          if (line) lines.push(line)
+        })
+        return lines
+      }
+      while (storyFontSize > 12) {
+        storyLines = wrapStory(storyFontSize)
+        const lineHeight = Math.round(storyFontSize * 1.5)
+        if (storyLines.length * lineHeight <= storyBottom - storyTop) break
+        storyFontSize -= 1
+      }
+      storyLines = wrapStory(storyFontSize)
+      const storyLineHeight = Math.round(storyFontSize * 1.5)
+      storyLines.forEach((line, index) => context.fillText(line, 96, storyTop + index * storyLineHeight))
       const image = new Image()
       image.onload = () => {
         context.save()
@@ -202,10 +234,10 @@ export default function App() {
         context.textAlign = 'left'
         context.font = '22px system-ui, sans-serif'
         context.fillStyle = '#7b332b'
-        context.fillText('一帧光影，一段校史；一封明信片，一份念想。', 92, 730)
+        context.fillText('一帧光影，一段校史；一封明信片，一份念想。', 92, 900)
         context.font = '18px system-ui, sans-serif'
         context.fillStyle = '#6a7569'
-        context.fillText('QINJING ORAL HISTORY ARCHIVE', 92, 770)
+        context.fillText('QINJING ORAL HISTORY ARCHIVE', 92, 950)
         canvas.toBlob((blob) => {
           if (!blob) { notify('明信片导出失败。'); return }
           const url = URL.createObjectURL(blob)
@@ -269,7 +301,7 @@ export default function App() {
             <div className="form-row"><SelectField label="授权状态" value={form.authorized} onChange={(value) => updateField('authorized', value)} options={[['yes', '已授权整理展示'], ['pending', '待确认授权'], ['private', '仅内部保存']]} /><Field label="备注" value={form.contact} onChange={(value) => updateField('contact', value)} placeholder="可选，用于后续回访" /></div>
             <div className="form-actions"><button className="primary-button liquid-glass" type="submit">保存档案</button><button className="secondary-button liquid-glass" type="button" onClick={resetForm}>清空表单</button><button className="secondary-button liquid-glass" type="button" onClick={loadDemo}>载入示例</button></div>
           </form></section>
-          <section className="panel-card liquid-glass"><h2>资料库检索与故事生成</h2><p className="panel-note">点击档案可回填编辑；选中档案后可生成故事卡、复制文本或导出 JSON 备份。</p><div className="searchbar"><Field label="检索人物 / 年份 / 地点 / 关键词" value={query} onChange={setQuery} placeholder="输入关键词筛选档案" /><div className="list-actions"><button className="secondary-button liquid-glass" type="button" onClick={exportData}><Download size={14} /> 导出</button><button className="danger-button liquid-glass" type="button" onClick={deleteSelected}>删除选中</button></div></div><div className="archive-list">{filteredRecords.length ? filteredRecords.map((record) => <button className={`archive-item ${selectedId === record.id ? 'active' : ''}`} key={record.id} type="button" onClick={() => selectRecord(record)}><div className="archive-head"><strong>{record.personName}</strong><span className="tag">{authorizationLabel(record.authorized)}</span></div><div className="archive-meta">{record.identity} · {record.year || '年份未填'} · {record.place || '地点未填'}</div><div className="archive-tags">{keywordsOf(record.keywords).slice(0, 4).map((keyword) => <span className="tag" key={keyword}>{keyword}</span>)}</div></button>) : <div className="empty-state">暂无匹配档案。请保存第一份访谈记录，或载入示例档案。</div>}</div>{storyText && <figure className="postcard-figure"><div className="postcard"><div className="postcard-copy"><div className="postcard-kicker">北科光影志 · 口述校史明信片</div><div className="postcard-scene">{scene.label} · {form.year || '岁月留痕'}</div><h3>{form.personName}</h3><div className="postcard-meta">{form.identity || '亲历者'} · {form.place || '北京科技大学'}</div><p>{storyText.replace(/\s+/g, ' ').slice(0, 138)}{storyText.length > 138 ? '…' : ''}</p><div className="postcard-footer">一帧光影，一段校史；一封明信片，一份念想。</div></div><div className="postcard-image"><img src={postcardPhoto} alt="从北科图片库随机抽取的明信片校园照片" onError={(event) => { event.currentTarget.src = postcardPhotos[0] }} /><div className="postmark"><strong>北科</strong><span>SINCE 1952</span></div></div></div><figcaption>故事生成后自动排版为校史明信片，可下载保存。</figcaption></figure>}<div className="story-card"><div className="story-meta">Oral History Story Card</div>{storyText ? <><h3>{form.personName}：{keywordsOf(form.keywords).join(' / ') || '校史记忆'}</h3><p>{storyText}</p></> : <><h3>请选择或保存一位受访者</h3><p>系统会根据人物信息、访谈摘要、口述片段与青年寄语，自动整理为故事卡。</p></>}</div><div className="card-actions"><button className="primary-button liquid-glass" type="button" onClick={generateStory}><Sparkles size={14} /> 生成故事卡</button>{storyText && <button className="secondary-button liquid-glass" type="button" onClick={downloadPostcard}><Download size={14} /> 下载明信片</button>}<button className="secondary-button liquid-glass" type="button" onClick={copyStory}>复制故事卡</button></div></section>
+          <section className="panel-card liquid-glass"><h2>资料库检索与故事生成</h2><p className="panel-note">点击档案可回填编辑；选中档案后可生成故事卡、复制文本或导出 JSON 备份。</p><div className="searchbar"><Field label="检索人物 / 年份 / 地点 / 关键词" value={query} onChange={setQuery} placeholder="输入关键词筛选档案" /><div className="list-actions"><button className="secondary-button liquid-glass" type="button" onClick={exportData}><Download size={14} /> 导出</button><button className="danger-button liquid-glass" type="button" onClick={deleteSelected}>删除选中</button></div></div><div className="archive-list">{filteredRecords.length ? filteredRecords.map((record) => <button className={`archive-item ${selectedId === record.id ? 'active' : ''}`} key={record.id} type="button" onClick={() => selectRecord(record)}><div className="archive-head"><strong>{record.personName}</strong><span className="tag">{authorizationLabel(record.authorized)}</span></div><div className="archive-meta">{record.identity} · {record.year || '年份未填'} · {record.place || '地点未填'}</div><div className="archive-tags">{keywordsOf(record.keywords).slice(0, 4).map((keyword) => <span className="tag" key={keyword}>{keyword}</span>)}</div></button>) : <div className="empty-state">暂无匹配档案。请保存第一份访谈记录，或载入示例档案。</div>}</div>{storyText && <figure className="postcard-figure"><div className="postcard"><div className="postcard-copy"><div className="postcard-kicker">北科光影志 · 口述校史明信片</div><div className="postcard-scene">{scene.label} · {form.year || '岁月留痕'}</div><h3>{form.personName}</h3><div className="postcard-meta">{form.identity || '亲历者'} · {form.place || '北京科技大学'}</div><p>{storyText}</p><div className="postcard-footer">一帧光影，一段校史；一封明信片，一份念想。</div></div><div className="postcard-image"><img src={postcardPhoto} alt="从北科图片库随机抽取的明信片校园照片" onError={(event) => { event.currentTarget.src = postcardPhotos[0] }} /><div className="postmark"><strong>北科</strong><span>SINCE 1952</span></div></div></div><figcaption>故事生成后自动排版为校史明信片，可下载保存。</figcaption></figure>}<div className="story-card"><div className="story-meta">Oral History Story Card</div>{storyText ? <><h3>{form.personName}：{keywordsOf(form.keywords).join(' / ') || '校史记忆'}</h3><p>{storyText}</p></> : <><h3>请选择或保存一位受访者</h3><p>系统会根据人物信息、访谈摘要、口述片段与青年寄语，自动整理为故事卡。</p></>}</div><div className="card-actions"><button className="primary-button liquid-glass" type="button" onClick={generateStory}><Sparkles size={14} /> 生成故事卡</button>{storyText && <button className="secondary-button liquid-glass" type="button" onClick={downloadPostcard}><Download size={14} /> 下载明信片</button>}<button className="secondary-button liquid-glass" type="button" onClick={copyStory}>复制故事卡</button></div></section>
         </div>
       </div>
     </section>
